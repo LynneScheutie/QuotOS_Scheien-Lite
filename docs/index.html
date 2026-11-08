@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>QuotOS_Scheien Lite · 0.6B 中国法律偏科小模型</title>
+<style>
+  :root{
+    --paper:#f7f5f1; --ink:#191817; --muted:#6f6a62; --line:#e3ddd2;
+    --card:#ffffff; --gold:#a8802f; --gold-soft:#f4ece0; --indigo:#3a3364;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--paper);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+       line-height:1.7;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px;margin:0 auto;padding:0 28px 90px}
+
+  nav{display:flex;align-items:center;justify-content:space-between;
+      padding:22px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:650;letter-spacing:.01em}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
+  nav .links{display:flex;gap:22px;color:var(--muted)}
+  nav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
+  nav a:hover{border-bottom-color:var(--gold)}
+
+  .hero{display:grid;grid-template-columns:1fr 352px;gap:46px;align-items:center;padding:64px 0 56px}
+  .kicker{font-size:12px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:16px}
+  h1{font-size:35px;line-height:1.28;margin:0 0 18px;font-weight:660;letter-spacing:-.015em}
+  h1 em{font-style:normal;color:var(--gold)}
+  .lead{color:var(--muted);font-size:16.5px;margin:0 0 26px;max-width:520px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
+  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;
+        font-size:12.5px;color:var(--muted)}
+  .chip b{color:var(--ink);font-weight:600}
+  .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .btn{display:inline-block;text-decoration:none;font-size:14.5px;font-weight:650;
+       padding:12px 24px;border-radius:10px;transition:.16s}
+  .btn.primary{background:var(--ink);color:#fff}
+  .btn.primary:hover{background:#000}
+  .btn.ghost{border:1px solid var(--line);color:var(--ink);background:#fff;font-weight:500}
+  .btn.ghost:hover{border-color:var(--gold)}
+  .hint{font-size:12.5px;color:var(--muted);margin-top:12px}
+
+  /* 角色卡 */
+  .figure{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;
+          padding:14px 14px 0;box-shadow:0 18px 40px -28px rgba(58,51,100,.45)}
+  .figure img{width:100%;display:block;border-radius:14px}
+  .nameplate{padding:16px 10px 20px;border-top:1px solid var(--line);margin-top:14px}
+  .np-top{display:flex;align-items:baseline;gap:8px}
+  .np-name{font-size:19px;font-weight:660}
+  .np-en{font-size:12px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
+  .np-role{font-size:12.5px;color:var(--gold);margin-top:3px;letter-spacing:.04em}
+  .quote{font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.8;
+         border-left:2px solid var(--gold-soft);padding-left:10px}
+
+  section{padding-top:56px}
+  h2{font-size:22px;margin:0 0 6px;font-weight:640;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:14.5px;margin:0 0 26px}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+  .pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 22px 24px;
+         display:flex;flex-direction:column}
+  .pcard.hero-card{border-color:rgba(168,128,47,.42);background:linear-gradient(180deg,#fffdf9,#fff)}
+  .pcard h3{margin:0 0 4px;font-size:16.5px;font-weight:640;display:flex;align-items:center;gap:8px}
+  .badge{font-size:10.5px;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(168,128,47,.4);
+         border-radius:5px;padding:1.5px 6px;font-weight:600}
+  .pcard .desc{color:var(--muted);font-size:13.5px;margin:0 0 18px;flex:1}
+  .size{font-size:12.5px;color:var(--muted);margin-top:10px}
+
+  pre{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;overflow-x:auto;
+      font-size:13px;line-height:1.75;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#37332d}
+  pre b{color:var(--gold);font-weight:600}
+
+  .warn{background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);
+        border-radius:0 14px 14px 0;padding:20px 24px;margin-top:8px}
+  .warn p{margin:0 0 12px;font-size:14.5px}
+  .warn p:last-child{margin:0}
+  .warn p b{color:var(--ink)}
+
+  .lore{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  .lore-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+  .lore-item h4{margin:0 0 6px;font-size:15px;font-weight:640}
+  .lore-item p{margin:0;font-size:13.5px;color:var(--muted)}
+
+  footer{margin-top:70px;padding-top:22px;border-top:1px solid var(--line);
+         display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+         font-size:12.5px;color:var(--muted)}
+  footer a{color:var(--gold);text-decoration:none}
+
+  @media(max-width:880px){
+    .hero{grid-template-columns:1fr;padding:44px 0}
+    .figure{max-width:360px}
+    .grid{grid-template-columns:1fr}
+    .lore{grid-template-columns:1fr}
+    h1{font-size:32px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav>
+    <div class="brand"><span class="dot"></span>QuotOS_Scheien<span style="color:var(--muted);font-weight:500">· Lite 0.6B</span></div>
+    <div class="links">
+      <a href="#download">下载</a>
+      <a href="#quickstart">上手</a>
+      <a href="#limits">能力边界</a>
+      <a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/blob/main/MODEL_CARD.md">模型卡</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div>
+      <div class="kicker">中国法律 · 偏科小模型</div>
+      <h1>只答<em>四类</em>问题的法律小模型，<br>装得进一台普通笔记本</h1>      <p class="lead">劳动争议、合同纠纷、侵权与人身损害赔偿、民间借贷。0.596 B 参数，纯 CPU 就能跑；别的领域她不会硬答，会直接说超出范围并让你去找执业律师。</p>
+
+      <div class="chips">
+        <span class="chip">基底 <b>Qwen3-0.6B</b></span>
+        <span class="chip">参数 <b>0.596 B</b></span>
+        <span class="chip">LoRA <b>r=16</b></span>
+        <span class="chip">最优 <b>step_00060</b></span>
+      </div>
+
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-Q4_K_M.gguf">下载 .gguf（378 MB）</a>
+        <a class="btn ghost" href="#download">其他版本</a>
+      </div>
+      <p class="hint">解压就能用，不用装 Python、不用 GitHub 账号，点按钮直接下载。</p>
+    </div>
+
+    <div class="figure">
+      <img src="assets/scheien.webp" alt="夏依恩 Scheien">
+      <div class="nameplate">
+        <div class="np-top"><span class="np-name">夏依恩</span><span class="np-en">Scheien</span></div>
+        <div class="np-role">獬豸化形 · 本小姐</div>
+        <p class="quote">「凡事讲究条理与格式，错一个标点都要挑出来。」</p>
+      </div>
+    </div>
+  </div>
+
+  <section id="download">
+    <h2>下载</h2>
+    <p class="sub">三个包都出自同一个 checkpoint（step_00060），不会下载到不同版本。</p>
+
+    <div class="grid">
+      <div class="pcard hero-card">
+        <h3>GGUF · Q4_K_M <span class="badge">推荐</span></h3>
+        <p class="desc">单个文件，Ollama / LM Studio / llama.cpp 直接加载。不用装 Python，不用装 torch。i5-1145G7 上实测生成 63.8 tok/s。</p>
+        <a class="btn primary" style="text-align:center" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-Q4_K_M.gguf">下载</a>
+        <div class="size">378 MB</div>
+      </div>
+
+      <div class="pcard">
+        <h3>fp16 完整权重</h3>
+        <p class="desc">transformers 直接跑；含分词器与 chat template，解压就是一个模型目录。</p>
+        <a class="btn ghost" style="text-align:center" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-fp16.zip">下载</a>
+        <div class="size">1.01 GB</div>
+      </div>
+
+      <div class="pcard">
+        <h3>LoRA adapter</h3>
+        <p class="desc">只有增量权重，需自备 Qwen3-0.6B 基底；给想自己合并、改量化的人。</p>
+        <a class="btn ghost" style="text-align:center" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-adapter-step60.zip">下载</a>
+        <div class="size">35.6 MB</div>
+      </div>
+    </div>
+    <p class="hint">GGUF 是从 step_00060 的合并权重转出来的：加载 0.29 秒，提示词 498 tok/s，生成 63.8 tok/s，一条完整五段式回答约 3 秒。</p>
+  </section>
+
+  <section id="quickstart">
+    <h2>三十秒上手</h2>
+    <p class="sub">以 Ollama 为例。顺手把她的口吻写进 SYSTEM，答话就会带着大小姐的刺。</p>
+<pre>ollama create scheien-lite -f Modelfile
+ollama run scheien-lite
+
+# Modelfile
+FROM ./QuotOS_Scheien-Lite-Q4_K_M.gguf
+PARAMETER temperature 0
+PARAMETER stop "&lt;|im_end|&gt;"
+SYSTEM """<b>你是中国法律咨询助手</b>，只处理劳动争议、合同纠纷、侵权与人身损害赔偿、民间借贷。
+回答结构固定：①结论 ②法律依据（法律名称+条号+条文要点，最多3条）
+③要件如何套用到本案 ④风险与时效提示 ⑤最后一句「以上不构成正式法律意见」。
+信息不足时先追问，不要猜。超范围问题直接说明并建议咨询执业律师。"""</pre>
+    <p class="hint">想让她用夏依恩的口吻说话，把上面 SYSTEM 换成 Lawlearn 的 scheien 人设即可——模型本身只会这一套标准口径，不会自动变成她。提问末尾加 /no_think 可跳过模型偶尔冒出来的思考段，直接给结论。</p>
+    <p class="hint">纯 llama.cpp 的命令行写法、必须知道的缺陷清单：<a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/USAGE-zh.txt">USAGE-zh.txt</a>。</p>
+  </section>
+
+  <section>
+    <h2>为什么是獬豸</h2>
+    <p class="sub">名字不是随便取的，她也不是贴上去的吉祥物。</p>
+    <div class="lore">
+      <div class="lore-item">
+        <h4>獬豸能辨曲直</h4>
+        <p>传说中它能用角顶倒理亏的一方。这个模型的全部克制都来自同一个动作：只引用库里校验得到的条号，不合规的直接判掉——训练数据的门禁就是这么干活的。</p>
+      </div>
+      <div class="lore-item">
+        <h4>洁癖式的严谨</h4>
+        <p>她挑标点、挑格式，对应到模型上就是固定五段式输出：结论、依据、要件套用、风险时效、免责声明。少一节就算不合格，评测里算「结构不完整」。</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="limits">
+    <h2>能力边界</h2>
+    <p class="sub">下面几条不是客套话，是实测出来的，写在模型卡里。</p>
+    <div class="warn">
+      <p><b>会的是壳子，不是法。</b>五段式结构、免责声明、越界拒答都学会了；免责声明率从基底的 50% 提到 100%。</p>
+      <p><b>条号能对上，条文会讲错。</b>训练门禁只校验「这部法有没有这一条」，不校验条文内容有没有被曲解。所以「编造条号 = 0」是假安全。GGUF 实测里它把降职降薪的依据安到了《劳动法》第三十条上——正确依据应是《劳动合同法》第三十五条。</p>
+      <p><b>任何引用都要回法条库核对。</b>当起草助手，不要当法条查询器。0.6B 装不下法条全文，硬背必然走形。</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>它是怎么来的</h2>
+    <p class="sub">全部在一个桌面工作目录里跑完，没有云 GPU。</p>
+    <div class="lore">
+      <div class="lore-item">
+        <h4>训练</h4>
+        <p>Qwen3-0.6B + LoRA SFT（r=16 / α=32，可训 1.66% 参数）。Windows 笔记本纯 CPU，8 线程，180 步分 6 段，约 72 分钟。</p>
+      </div>
+      <div class="lore-item">
+        <h4>选模</h4>
+        <p>按验证集 loss 挑：60 步见底 1.0694，之后 1.08 → 1.17 → 1.26 → 1.44 一路上升，180 步已经过拟合。所以默认版本锁在 step_00060。</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>QuotOS_Scheien Lite · 0.6B ｜ 验证件，不构成正式法律意见</div>
+    <div><a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite">GitHub</a> · <a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/blob/main/MODEL_CARD.md">MODEL_CARD</a> · 人设来自 Lawlearn 的 scheien</div>
+  </footer>
+
+</div>
+</body>
+</html>

@@ -3,232 +3,237 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>QuotOS_Scheien Lite · 0.6B 中国法律偏科小模型</title>
+<title>QuotOS_Scheien Lite · 0.6B 中文法律偏科小模型</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231f2328'/%3E%3Cpath d='M16 6l2.6 6.2 6.7.6-5.1 4.4 1.6 6.6-5.8-3.4-5.8 3.4 1.6-6.6-5.1-4.4 6.7-.6z' fill='%23fff'/%3E%3C/svg%3E">
 <style>
   :root{
-    --paper:#f7f5f1; --ink:#191817; --muted:#6f6a62; --line:#e3ddd2;
-    --card:#ffffff; --gold:#a8802f; --gold-soft:#f4ece0; --indigo:#3a3364;
+    --ink:#1f2328; --muted:#59636e; --line:#d1d9e0; --line-soft:#e6eaef;
+    --link:#0969da; --code-bg:#f6f8fa; --quote-bg:#f6f8fa;
+    --note-bg:#ddf4ff; --note-line:#0969da;
+    --warn-bg:#fff8c5; --warn-line:#9a6700;
   }
   *{box-sizing:border-box}
-  html,body{margin:0}
-  body{background:var(--paper);color:var(--ink);
-       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
-       line-height:1.7;-webkit-font-smoothing:antialiased}
-  .wrap{max-width:980px;margin:0 auto;padding:0 28px 90px}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:#fff;color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans",Helvetica,Arial,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+    font-size:16px;line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .page{max-width:920px;margin:0 auto;padding:40px 24px 72px}
+  header{text-align:center;padding:8px 0 0;margin-bottom:8px}
+  .avatar{width:116px;height:116px;object-fit:cover;object-position:center 30%;border-radius:10px;border:1px solid var(--line-soft);display:block;margin:0 auto 18px}
+  h1{font-size:30px;font-weight:600;margin:0 0 6px;letter-spacing:-.01em}
+  .subtitle{margin:0 0 8px;font-size:16px;color:var(--muted)}
+  .meta{margin:0 0 14px;font-size:13.5px;color:var(--muted)}
+  .meta span{margin:0 6px}
+  header .note{margin:0 auto 4px;font-size:14px}
 
-  nav{display:flex;align-items:center;justify-content:space-between;
-      padding:22px 0;border-bottom:1px solid var(--line);font-size:14px}
-  .brand{display:flex;align-items:center;gap:9px;font-weight:650;letter-spacing:.01em}
-  .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 3px var(--gold-soft)}
-  nav .links{display:flex;gap:22px;color:var(--muted)}
-  nav a{color:inherit;text-decoration:none;border-bottom:1px solid transparent}
-  nav a:hover{border-bottom-color:var(--gold)}
+  h2{font-size:22px;font-weight:600;margin:44px 0 14px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{font-size:17px;font-weight:600;margin:26px 0 8px}
+  p{margin:0 0 14px}
+  a{color:var(--link);text-decoration:none}
+  a:hover{text-decoration:underline}
 
-  .hero{display:grid;grid-template-columns:1fr 352px;gap:46px;align-items:center;padding:64px 0 56px}
-  .kicker{font-size:12px;letter-spacing:.18em;color:var(--gold);text-transform:uppercase;margin-bottom:16px}
-  h1{font-size:35px;line-height:1.28;margin:0 0 18px;font-weight:660;letter-spacing:-.015em}
-  h1 em{font-style:normal;color:var(--gold)}
-  .lead{color:var(--muted);font-size:16.5px;margin:0 0 26px;max-width:520px}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:30px}
-  .chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 12px;
-        font-size:12.5px;color:var(--muted)}
-  .chip b{color:var(--ink);font-weight:600}
-  .cta{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-  .btn{display:inline-block;text-decoration:none;font-size:14.5px;font-weight:650;
-       padding:12px 24px;border-radius:10px;transition:.16s}
-  .btn.primary{background:var(--ink);color:#fff}
-  .btn.primary:hover{background:#000}
-  .btn.ghost{border:1px solid var(--line);color:var(--ink);background:#fff;font-weight:500}
-  .btn.ghost:hover{border-color:var(--gold)}
-  .hint{font-size:12.5px;color:var(--muted);margin-top:12px}
+  table{width:100%;border-collapse:collapse;margin:0 0 16px;font-size:14.5px}
+  th,td{border:1px solid var(--line);padding:7px 12px;text-align:left;vertical-align:top}
+  th{background:var(--code-bg);font-weight:600;white-space:nowrap}
+  td.num{white-space:nowrap;color:var(--muted)}
+  .scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
 
-  /* 角色卡 */
-  .figure{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;
-          padding:14px 14px 0;box-shadow:0 18px 40px -28px rgba(58,51,100,.45)}
-  .figure img{width:100%;display:block;border-radius:14px}
-  .nameplate{padding:16px 10px 20px;border-top:1px solid var(--line);margin-top:14px}
-  .np-top{display:flex;align-items:baseline;gap:8px}
-  .np-name{font-size:19px;font-weight:660}
-  .np-en{font-size:12px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase}
-  .np-role{font-size:12.5px;color:var(--gold);margin-top:3px;letter-spacing:.04em}
-  .quote{font-size:13px;color:var(--muted);margin:10px 0 0;line-height:1.8;
-         border-left:2px solid var(--gold-soft);padding-left:10px}
+  pre{background:var(--code-bg);border:1px solid var(--line-soft);border-radius:6px;
+      padding:14px 16px;overflow-x:auto;margin:0 0 14px;
+      font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+      font-size:13px;line-height:1.55;color:#24292f}
+  code{font-family:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+       font-size:.92em;background:rgba(175,184,193,.2);padding:.15em .35em;border-radius:5px}
+  pre code{background:none;padding:0;font-size:inherit}
 
-  section{padding-top:56px}
-  h2{font-size:22px;margin:0 0 6px;font-weight:640;letter-spacing:-.01em}
-  .sub{color:var(--muted);font-size:14.5px;margin:0 0 26px}
+  .adm{border-radius:6px;padding:12px 16px;margin:0 0 16px;font-size:14.5px;line-height:1.6}
+  .adm p{margin:0 0 8px}
+  .adm p:last-child{margin:0}
+  .adm .t{display:block;font-weight:600;margin-bottom:4px}
+  .note-box{background:var(--note-bg);border-left:4px solid var(--note-line)}
+  .warn-box{background:var(--warn-bg);border-left:4px solid var(--warn-line)}
+  .plain-box{background:var(--quote-bg);border-left:4px solid var(--line)}
 
-  .grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-  .pcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 22px 24px;
-         display:flex;flex-direction:column}
-  .pcard.hero-card{border-color:rgba(168,128,47,.42);background:linear-gradient(180deg,#fffdf9,#fff)}
-  .pcard h3{margin:0 0 4px;font-size:16.5px;font-weight:640;display:flex;align-items:center;gap:8px}
-  .badge{font-size:10.5px;letter-spacing:.08em;color:var(--gold);border:1px solid rgba(168,128,47,.4);
-         border-radius:5px;padding:1.5px 6px;font-weight:600}
-  .pcard .desc{color:var(--muted);font-size:13.5px;margin:0 0 18px;flex:1}
-  .size{font-size:12.5px;color:var(--muted);margin-top:10px}
+  .faq h3{margin:22px 0 6px}
+  .faq p{color:var(--muted);font-size:15px;margin:0 0 6px}
 
-  pre{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;overflow-x:auto;
-      font-size:13px;line-height:1.75;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#37332d}
-  pre b{color:var(--gold);font-weight:600}
+  footer{margin-top:52px;padding-top:18px;border-top:1px solid var(--line);
+         font-size:13px;color:var(--muted)}
+  footer p{margin:0 0 6px}
 
-  .warn{background:#fff;border:1px solid var(--line);border-left:3px solid var(--gold);
-        border-radius:0 14px 14px 0;padding:20px 24px;margin-top:8px}
-  .warn p{margin:0 0 12px;font-size:14.5px}
-  .warn p:last-child{margin:0}
-  .warn p b{color:var(--ink)}
-
-  .lore{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
-  .lore-item{background:#fff;border:1px solid var(--line);border-radius:14px;padding:20px 22px}
-  .lore-item h4{margin:0 0 6px;font-size:15px;font-weight:640}
-  .lore-item p{margin:0;font-size:13.5px;color:var(--muted)}
-
-  footer{margin-top:70px;padding-top:22px;border-top:1px solid var(--line);
-         display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
-         font-size:12.5px;color:var(--muted)}
-  footer a{color:var(--gold);text-decoration:none}
-
-  @media(max-width:880px){
-    .hero{grid-template-columns:1fr;padding:44px 0}
-    .figure{max-width:360px}
-    .grid{grid-template-columns:1fr}
-    .lore{grid-template-columns:1fr}
-    h1{font-size:32px}
+  @media(max-width:640px){
+    .page{padding:28px 18px 56px}
+    h1{font-size:24px}
+    h2{font-size:19px;margin-top:34px}
+    table{font-size:13.5px}
+    th,td{padding:6px 8px}
+    .avatar{width:88px;height:88px}
   }
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="page">
 
-  <nav>
-    <div class="brand"><span class="dot"></span>QuotOS_Scheien<span style="color:var(--muted);font-weight:500">· Lite 0.6B</span></div>
-    <div class="links">
-      <a href="#download">下载</a>
-      <a href="#quickstart">上手</a>
-      <a href="#limits">能力边界</a>
-      <a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/blob/main/MODEL_CARD.md">模型卡</a>
-    </div>
-  </nav>
+  <header>
+    <img class="avatar" src="assets/scheien.webp" alt="夏依恩 Scheien">
+    <h1>QuotOS_Scheien Lite</h1>
+    <p class="subtitle">0.6B 中文法律偏科小模型</p>
+    <p class="meta"><span>Qwen3-0.6B</span>·<span>0.596 B 参数</span>·<span>LoRA SFT</span>·<span>纯 CPU 可跑</span></p>
+    <p class="note"><strong>本页只放发布包，不含训练代码与训练数据。</strong></p>
+  </header>
 
-  <div class="hero">
-    <div>
-      <div class="kicker">中国法律 · 偏科小模型</div>
-      <h1>只答<em>四类</em>问题的法律小模型，<br>装得进一台普通笔记本</h1>      <p class="lead">劳动争议、合同纠纷、侵权与人身损害赔偿、民间借贷。0.596 B 参数，纯 CPU 就能跑；别的领域她不会硬答，会直接说超出范围并让你去找执业律师。</p>
+  <h2>下载</h2>
 
-      <div class="chips">
-        <span class="chip">基底 <b>Qwen3-0.6B</b></span>
-        <span class="chip">参数 <b>0.596 B</b></span>
-        <span class="chip">LoRA <b>r=16</b></span>
-        <span class="chip">最优 <b>step_00060</b></span>
-      </div>
-
-      <div class="cta">
-        <a class="btn primary" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-Q4_K_M.gguf">下载 .gguf（378 MB）</a>
-        <a class="btn ghost" href="#download">其他版本</a>
-      </div>
-      <p class="hint">解压就能用，不用装 Python、不用 GitHub 账号，点按钮直接下载。</p>
-    </div>
-
-    <div class="figure">
-      <img src="assets/scheien.webp" alt="夏依恩 Scheien">
-      <div class="nameplate">
-        <div class="np-top"><span class="np-name">夏依恩</span><span class="np-en">Scheien</span></div>
-        <div class="np-role">獬豸化形 · 本小姐</div>
-        <p class="quote">「凡事讲究条理与格式，错一个标点都要挑出来。」</p>
-      </div>
-    </div>
+  <div class="scroll">
+  <table>
+    <tr>
+      <th>格式</th>
+      <th>文件</th>
+      <th>体积</th>
+      <th>适合</th>
+    </tr>
+    <tr>
+      <td>GGUF · Q4_K_M</td>
+      <td><a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-Q4_K_M.gguf">QuotOS_Scheien-Lite-Q4_K_M.gguf</a></td>
+      <td class="num">378 MB</td>
+      <td>Ollama / LM Studio / llama.cpp，单文件，不用装 Python</td>
+    </tr>
+    <tr>
+      <td>fp16 完整权重</td>
+      <td><a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-fp16.zip">QuotOS_Scheien-Lite-fp16.zip</a></td>
+      <td class="num">1.01 GB</td>
+      <td>transformers 直接加载，含分词器与 chat template</td>
+    </tr>
+    <tr>
+      <td>LoRA adapter</td>
+      <td><a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-adapter-step60.zip">QuotOS_Scheien-Lite-adapter-step60.zip</a></td>
+      <td class="num">35.6 MB</td>
+      <td>只有增量权重，自备 Qwen3-0.6B 基底</td>
+    </tr>
+    <tr>
+      <td>说明文件</td>
+      <td><a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/USAGE-zh.txt">USAGE-zh.txt</a></td>
+      <td class="num">3 KB</td>
+      <td>三种加载方式的完整命令与已知缺陷清单</td>
+    </tr>
+  </table>
   </div>
 
-  <section id="download">
-    <h2>下载</h2>
-    <p class="sub">三个包都出自同一个 checkpoint（step_00060），不会下载到不同版本。</p>
+  <p>三个权重包都出自同一个 checkpoint（<code>step_00060</code>），不会下载到不同版本。发布号 <code>v0.1.0-lite</code>，匿名可直接下。</p>
 
-    <div class="grid">
-      <div class="pcard hero-card">
-        <h3>GGUF · Q4_K_M <span class="badge">推荐</span></h3>
-        <p class="desc">单个文件，Ollama / LM Studio / llama.cpp 直接加载。不用装 Python，不用装 torch。i5-1145G7 上实测生成 63.8 tok/s。</p>
-        <a class="btn primary" style="text-align:center" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-Q4_K_M.gguf">下载</a>
-        <div class="size">378 MB</div>
-      </div>
+  <div class="adm note-box">
+    <p><span class="t">说明</span>私有仓库里另有一份同号 Release，只是备份；对外请用本页链接，那个地址匿名访问会 404。这是权限设置，不是链接失效。</p>
+  </div>
 
-      <div class="pcard">
-        <h3>fp16 完整权重</h3>
-        <p class="desc">transformers 直接跑；含分词器与 chat template，解压就是一个模型目录。</p>
-        <a class="btn ghost" style="text-align:center" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-fp16.zip">下载</a>
-        <div class="size">1.01 GB</div>
-      </div>
+  <h2>加载</h2>
 
-      <div class="pcard">
-        <h3>LoRA adapter</h3>
-        <p class="desc">只有增量权重，需自备 Qwen3-0.6B 基底；给想自己合并、改量化的人。</p>
-        <a class="btn ghost" style="text-align:center" href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/QuotOS_Scheien-Lite-adapter-step60.zip">下载</a>
-        <div class="size">35.6 MB</div>
-      </div>
-    </div>
-    <p class="hint">GGUF 是从 step_00060 的合并权重转出来的：加载 0.29 秒，提示词 498 tok/s，生成 63.8 tok/s，一条完整五段式回答约 3 秒。</p>
-  </section>
-
-  <section id="quickstart">
-    <h2>三十秒上手</h2>
-    <p class="sub">以 Ollama 为例。顺手把她的口吻写进 SYSTEM，答话就会带着大小姐的刺。</p>
-<pre>ollama create scheien-lite -f Modelfile
-ollama run scheien-lite
-
-# Modelfile
+  <h3>Ollama</h3>
+  <pre><code># Modelfile
 FROM ./QuotOS_Scheien-Lite-Q4_K_M.gguf
 PARAMETER temperature 0
 PARAMETER stop "&lt;|im_end|&gt;"
-SYSTEM """<b>你是中国法律咨询助手</b>，只处理劳动争议、合同纠纷、侵权与人身损害赔偿、民间借贷。
+SYSTEM """你是中国法律咨询助手，只处理劳动争议、合同纠纷、侵权与人身损害赔偿、民间借贷。
 回答结构固定：①结论 ②法律依据（法律名称+条号+条文要点，最多3条）
 ③要件如何套用到本案 ④风险与时效提示 ⑤最后一句「以上不构成正式法律意见」。
-信息不足时先追问，不要猜。超范围问题直接说明并建议咨询执业律师。"""</pre>
-    <p class="hint">想让她用夏依恩的口吻说话，把上面 SYSTEM 换成 Lawlearn 的 scheien 人设即可——模型本身只会这一套标准口径，不会自动变成她。提问末尾加 /no_think 可跳过模型偶尔冒出来的思考段，直接给结论。</p>
-    <p class="hint">纯 llama.cpp 的命令行写法、必须知道的缺陷清单：<a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases/latest/download/USAGE-zh.txt">USAGE-zh.txt</a>。</p>
-  </section>
+信息不足时先追问，不要猜。超范围问题直接说明并建议咨询执业律师。"""
 
-  <section>
-    <h2>为什么是獬豸</h2>
-    <p class="sub">名字不是随便取的，她也不是贴上去的吉祥物。</p>
-    <div class="lore">
-      <div class="lore-item">
-        <h4>獬豸能辨曲直</h4>
-        <p>传说中它能用角顶倒理亏的一方。这个模型的全部克制都来自同一个动作：只引用库里校验得到的条号，不合规的直接判掉——训练数据的门禁就是这么干活的。</p>
-      </div>
-      <div class="lore-item">
-        <h4>洁癖式的严谨</h4>
-        <p>她挑标点、挑格式，对应到模型上就是固定五段式输出：结论、依据、要件套用、风险时效、免责声明。少一节就算不合格，评测里算「结构不完整」。</p>
-      </div>
-    </div>
-  </section>
+ollama create scheien-lite -f Modelfile
+ollama run scheien-lite</code></pre>
 
-  <section id="limits">
-    <h2>能力边界</h2>
-    <p class="sub">下面几条不是客套话，是实测出来的，写在模型卡里。</p>
-    <div class="warn">
-      <p><b>会的是壳子，不是法。</b>五段式结构、免责声明、越界拒答都学会了；免责声明率从基底的 50% 提到 100%。</p>
-      <p><b>条号能对上，条文会讲错。</b>训练门禁只校验「这部法有没有这一条」，不校验条文内容有没有被曲解。所以「编造条号 = 0」是假安全。GGUF 实测里它把降职降薪的依据安到了《劳动法》第三十条上——正确依据应是《劳动合同法》第三十五条。</p>
-      <p><b>任何引用都要回法条库核对。</b>当起草助手，不要当法条查询器。0.6B 装不下法条全文，硬背必然走形。</p>
-    </div>
-  </section>
+  <h3>llama.cpp</h3>
+  <pre><code>./llama-cli -m QuotOS_Scheien-Lite-Q4_K_M.gguf \
+  -p "公司拖欠我两个月工资，没签合同，能要回来吗？" \
+  -n 600 --temp 0</code></pre>
 
-  <section>
-    <h2>它是怎么来的</h2>
-    <p class="sub">全部在一个桌面工作目录里跑完，没有云 GPU。</p>
-    <div class="lore">
-      <div class="lore-item">
-        <h4>训练</h4>
-        <p>Qwen3-0.6B + LoRA SFT（r=16 / α=32，可训 1.66% 参数）。Windows 笔记本纯 CPU，8 线程，180 步分 6 段，约 72 分钟。</p>
-      </div>
-      <div class="lore-item">
-        <h4>选模</h4>
-        <p>按验证集 loss 挑：60 步见底 1.0694，之后 1.08 → 1.17 → 1.26 → 1.44 一路上升，180 步已经过拟合。所以默认版本锁在 step_00060。</p>
-      </div>
-    </div>
-  </section>
+  <h3>transformers</h3>
+  <pre><code>from transformers import AutoModelForCausalLM, AutoTokenizer
+
+model = AutoModelForCausalLM.from_pretrained("./QuotOS_Scheien-Lite-fp16", dtype="float32")
+tok = AutoTokenizer.from_pretrained("./QuotOS_Scheien-Lite-fp16")
+msg = [{"role": "user", "content": "试用期被辞退，公司没给理由，怎么办？"}]
+ids = tok.apply_chat_template(msg, add_generation_prompt=True, return_tensors="pt")
+out = model.generate(ids, max_new_tokens=600, do_sample=False)
+print(tok.decode(out[0][ids.shape[1]:], skip_special_tokens=True))</code></pre>
+
+  <p>提问末尾加 <code>/no_think</code> 可以跳过模型偶尔冒出来的思考段，直接给结论。</p>
+
+  <h2>能力边界</h2>
+
+  <div class="adm warn-box">
+    <p><span class="t">这是验证件，不是产品</span>它学会了回答的结构与边界，<strong>没有学会法</strong>。下面的几条是实测结论，不是客套话。</p>
+  </div>
+
+  <p><strong>结构学会了，条文会讲错。</strong>五段式结构、免责声明、越界拒答都学到了，免责声明出现率从基座的 50% 提到 100%。但训练门禁只校验「这部法有没有这一条」，不校验条文有没有被曲解。GGUF 实测里它把降职降薪的依据安到了《劳动法》第三十条上，正确依据应是《劳动合同法》第三十五条。</p>
+
+  <p><strong>编造条号为零，不等于引用正确。</strong>门禁把编造条号压到了 0，可释义张冠李戴的情况仍然存在。任何引用都要回法条库核对原文，把当起草助手用，别当法条查询器。</p>
+
+  <p><strong>0.6B 装不下法条全文。</strong>这个参数量硬背条文必然走形。设计上就是「模型学怎么说，法条库管说什么」——条文原文要外部检索注入。</p>
+
+  <p><strong>不做的事。</strong>刑事、涉外、税务、诉讼策略都在边界外，遇到会明确转介；输出不构成法律意见，不能替代执业律师。</p>
+
+  <h2>实测</h2>
+
+  <div class="scroll">
+  <table>
+    <tr><th>项</th><th>数值</th></tr>
+    <tr><td>基底</td><td>Qwen3-0.6B，Apache-2.0，fp32 加载，参数 0.596 B</td></tr>
+    <tr><td>训练</td><td>LoRA SFT，r=16 / α=32 / dropout 0.05，可训 10,092,544 参数（1.66%）</td></tr>
+    <tr><td>硬件</td><td>Windows，i5-1145G7（15 W，4 核 8 线程），16 GB，集显，纯 CPU</td></tr>
+    <tr><td>耗时</td><td>180 步，分 6 段，每段 30 步，合计约 72 分钟</td></tr>
+    <tr><td>推理</td><td>fp32 / CPU 7–9 tok/s；GGUF Q4_K_M / CPU 63.8 tok/s（提示词 498 tok/s）</td></tr>
+    <tr><td>法条库</td><td>129 部法规 / 9,268 条 / 108.4 万字（含司法解释与历史版本）</td></tr>
+    <tr><td>训练数据</td><td>234 条，训练 234 / 验证 26</td></tr>
+    <tr><td>评测集</td><td>18 题，覆盖结构、条号准确性、抗幻觉、越界拒绝</td></tr>
+  </table>
+  </div>
+
+  <p>为什么锁在 60 步：180 步跑完后，验证集 loss 在 60 步见底，之后一路上升。</p>
+
+  <div class="scroll">
+  <table>
+    <tr><th>checkpoint</th><th>验证 loss</th><th>生成表现</th></tr>
+    <tr><td>纯基底</td><td>1.8667</td><td>格式对，条文释义胡说</td></tr>
+    <tr><td>step_00030</td><td>1.0790</td><td>正常</td></tr>
+    <tr><td><strong>step_00060</strong></td><td><strong>1.0694</strong></td><td>正常，结论对</td></tr>
+    <tr><td>step_00090</td><td>1.0822</td><td>开始飘</td></tr>
+    <tr><td>step_00120</td><td>1.1672</td><td>退化</td></tr>
+    <tr><td>step_00180</td><td>1.4403</td><td>出现 <code>анииании…</code> 死循环</td></tr>
+  </table>
+  </div>
+
+  <p>234 条数据 1 轮就到顶，多训就是背题。选模型看验证集，不要默认拿最后一个 checkpoint。</p>
+
+  <h2>常见问题</h2>
+
+  <div class="faq">
+    <h3>为什么不做 4B</h3>
+    <p>4B 是另一条线（MLX / QLoRA / 云端），在自己的独立仓库里跑，和这一版互不混用。这一页只负责 0.6B。</p>
+
+    <h3>会不会编条号</h3>
+    <p>训练数据全部过了条号门禁，实测编造条号率为 0。但门禁不校验释义，条文讲错的情况确实存在，引用前请回库核对。</p>
+
+    <h3>能不能当法条查询器</h3>
+    <p>不能。它记不住条文原文，也不该记。查条文请用检索库或官方数据库，这个模型只负责把条文讲成人话。</p>
+
+    <h3>能不能商用</h3>
+    <p>代码与法条数据 Apache-2.0，基底 Qwen3-0.6B 亦为 Apache-2.0。但模型输出不构成法律意见，商用场景请自行评估并配备人工复核。</p>
+
+    <h3>手机上能跑吗</h3>
+    <p>GGUF 378 MB，llama.cpp 的移动端构建可以加载，速度取决于机型。没有移动端专用版本，也没有做适配测试。</p>
+  </div>
+
+  <h2>许可与免责</h2>
+
+  <p>代码与法条数据：Apache-2.0。基底模型：Qwen3-0.6B，Apache-2.0，版权属阿里巴巴；本仓库产出的 adapter 是其衍生作品，须一并遵守。法条正文依《著作权法》第五条属不受保护对象，本仓库的条文经机器化整理，不保证与官方发布版本逐字一致，正式引用以国家法律法规数据库为准。</p>
+
+  <p>本项目为学习与研究用途。输出内容不构成法律意见，不得作为诉讼、签约、仲裁的依据；使用者应自行核验条文现行有效性与适用性。</p>
 
   <footer>
-    <div>QuotOS_Scheien Lite · 0.6B ｜ 验证件，不构成正式法律意见</div>
-    <div><a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite">GitHub</a> · <a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/blob/main/MODEL_CARD.md">MODEL_CARD</a> · 人设来自 Lawlearn 的 scheien</div>
+    <p>QuotOS_Scheien Lite · 0.6B ｜ 验证件，不构成正式法律意见</p>
+    <p><a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite">发布仓库</a>　·　<a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/blob/main/MODEL_CARD.md">模型卡</a>　·　<a href="https://github.com/LynneScheutie/QuotOS_Scheien-Lite/releases">历史版本</a></p>
   </footer>
 
 </div>
